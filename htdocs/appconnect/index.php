@@ -13,8 +13,11 @@
             $password = $_GET['password']; // password parameter converted to sha hash
             $passhash = sha1(strtoupper($username.":".$password));
             
-            $sql = "SELECT * FROM account WHERE username='$username' and sha_pass_hash='$passhash'";
-            $result = $conn->query($sql);
+            $stmt = $stmt = $conn->prepare("SELECT * FROM account WHERE username=? and sha_pass_hash=?");
+            $stmt->bind_param('ss', $username, $passhash); // 's' specifies the variable type => 'string'
+            $stmt->execute();
+            
+            $result = $stmt->get_result();
     
             if ($result->num_rows > 0) 
             {
